@@ -1,7 +1,5 @@
 import { createContext, useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
-import api from "../api/axios";
-import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
@@ -9,31 +7,38 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [authTokens, setAuthTokens] = useState(null);
   const [loading, setLoading] = useState(true);
-  // useNavigate no se puede usar aquí directamente si AuthProvider envuelve a Router.
-  // Por simplicidad, manejaremos la redirección en los componentes.
 
   const loginUser = async (e) => {
     e.preventDefault();
-    const response = await fetch("http://127.0.0.1:8000/api/token/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: e.target.username.value,
-        password: e.target.password.value,
-      }),
-    });
-    const data = await response.json();
+    const baseURL = import.meta.env.VITE_API_URL;
 
-    if (response.status === 200) {
-      setAuthTokens(data);
-      setUser(jwtDecode(data.access));
-      localStorage.setItem("token", data.access); // Guardar token simple
-      localStorage.setItem("authTokens", JSON.stringify(data)); // Guardar tokens completos
-      return true; // Login exitoso
-    } else {
-      alert("Algo salió mal con el login");
+    try {
+      const response = await fetch(`${baseURL}/api/token/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: e.target.username.value,
+          password: e.target.password.value,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.status === 200) {
+        setAuthTokens(data);
+        setUser(jwtDecode(data.access));
+        localStorage.setItem("token", data.access);
+        localStorage.setItem("authTokens", JSON.stringify(data));
+        return true; // Login exitoso
+      } else {
+        alert("Credenciales incorrectas o error en el servidor");
+        return false;
+      }
+    } catch (error) {
+      console.error("Error en el login:", error);
+      alert("Error de conexión. Revisa tu internet");
       return false;
     }
   };
@@ -47,11 +52,17 @@ export const AuthProvider = ({ children }) => {
 
   // Al cargar la página, verificar si hay token guardado
   useEffect(() => {
-    let authTokensLocal = localStorage.getItem("authTokens");
+    const authTokensLocal = localStorage.getItem("authTokens");
     if (authTokensLocal) {
-      let tokens = JSON.parse(authTokensLocal);
-      setAuthTokens(tokens);
-      setUser(jwtDecode(tokens.access));
+      try {
+        const tokens = JSON.parse(authTokensLocal);
+        setAuthTokens(tokens);
+        setUser(jwtDecode(tokens.access));
+      } catch (error) {
+        // Si el token está corrupto, limpiamos todo
+        console.error("Error al restaurar sesión:", error);
+        logoutUser();
+      }
     }
     setLoading(false);
   }, []);
