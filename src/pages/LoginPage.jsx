@@ -40,7 +40,7 @@ const LoginPage = () => {
         }}
       >
         <Typography component="h1" variant="h5" gutterBottom>
-          Iniciar Sesión - OLTP
+          Iniciar Sesión
         </Typography>
         <Box
           component="form"
