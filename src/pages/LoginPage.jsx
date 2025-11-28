@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Box, Paper, Typography, TextField, Button } from "@mui/material";
+import logoInsolus from "../assets/insolus.png";
 
 const LoginPage = () => {
   const { loginUser } = useContext(AuthContext);
@@ -85,6 +86,26 @@ const LoginPage = () => {
           >
             INGRESAR
           </Button>
+          <Box
+            sx={{
+              mt: 1,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              opacity: 0.7, // Le da un toque sutil y elegante
+            }}
+          >
+            <Typography variant="caption" sx={{ color: "white", mb: 0 }}>
+              Powered by
+            </Typography>
+
+            {/* Aquí va tu imagen */}
+            <img
+              src={logoInsolus}
+              alt="Logo Insolus"
+              style={{ height: "80px", width: "auto" }} // Ajusta la altura según necesites
+            />
+          </Box>
         </Box>
       </Paper>
     </Box>
