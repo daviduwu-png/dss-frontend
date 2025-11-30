@@ -1,13 +1,8 @@
 import React from "react";
 import { Typography, Button } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
 import InsightsIcon from "@mui/icons-material/Insights";
 
-const ProjectActionsBar = ({
-  isProjectManager,
-  onNewProjectClick,
-  onPredictClick,
-}) => {
+const ProjectActionsBar = ({ isProjectManager, onPredictClick }) => {
   return (
     <div
       style={{
@@ -17,7 +12,7 @@ const ProjectActionsBar = ({
         marginBottom: "20px",
       }}
     >
-      <Typography variant="h5">Proyectos Registrados (OLTP)</Typography>
+      <Typography variant="h5">Proyectos Registrados</Typography>
 
       <div>
         {isProjectManager && (
@@ -30,15 +25,6 @@ const ProjectActionsBar = ({
               sx={{ mr: 2 }}
             >
               Predicción de Defectos
-            </Button>
-
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<AddIcon />}
-              onClick={onNewProjectClick}
-            >
-              Nuevo Proyecto
             </Button>
           </>
         )}

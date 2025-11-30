@@ -5,22 +5,12 @@ import { useNavigate } from "react-router-dom";
 import { Container } from "@mui/material";
 import HeaderUserInfo from "../components/HeaderUserInfo";
 import ProjectActionsBar from "../components/ProjectActionsBar";
-import CreateProjectDialog from "../components/CreateProjectDialog";
 import ProjectGrid from "../components/ProjectGrid";
 
 const Dashboard = () => {
   const [projects, setProjects] = useState([]);
   const { user, logoutUser } = useContext(AuthContext);
   const navigate = useNavigate();
-
-  const [open, setOpen] = useState(false);
-  const [newProject, setNewProject] = useState({
-    name: "",
-    budget: "",
-    start_date: "",
-    status: "Planned",
-    client: 1,
-  });
 
   // Verificamos si es Admin O si tiene el grupo 'Project Managers' en su lista
   const isProjectManager =
@@ -50,30 +40,6 @@ const Dashboard = () => {
     }
   };
 
-  const handleClickOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
-  const handleCreate = async () => {
-    try {
-      await api.post("/api/gestion/projects/", newProject);
-      setOpen(false);
-      getProjects();
-      setNewProject({
-        name: "",
-        budget: "",
-        start_date: "",
-        status: "Planned",
-        client: 1,
-      });
-    } catch (error) {
-      alert("Error al crear proyecto. Revisa los campos.");
-    }
-  };
-
-  const handleChange = (e) => {
-    setNewProject({ ...newProject, [e.target.name]: e.target.value });
-  };
-
   return (
     <Container maxWidth="xl" sx={{ mt: 4 }}>
       <HeaderUserInfo
@@ -84,19 +50,10 @@ const Dashboard = () => {
 
       <ProjectActionsBar
         isProjectManager={isProjectManager}
-        onNewProjectClick={isProjectManager ? handleClickOpen : undefined}
         onPredictClick={() => navigate("/predict")}
       />
 
       <ProjectGrid projects={projects} />
-
-      <CreateProjectDialog
-        open={open}
-        onClose={handleClose}
-        onCreate={handleCreate}
-        newProject={newProject}
-        onChange={handleChange}
-      />
     </Container>
   );
 };
